@@ -20,7 +20,6 @@ def save_bar_counts(series: pd.Series, title: str, out_path: str):
 
 def save_f1_per_class(y_true, y_pred, title: str, out_path: str):
     rep = classification_report(y_true, y_pred, output_dict=True, zero_division=0)
-    # Filtra solo classi (evita accuracy/macro avg/weighted avg)
     rows = {k: v for k, v in rep.items() if isinstance(v, dict) and "f1-score" in v}
     f1 = pd.Series({k: rows[k]["f1-score"] for k in rows}).sort_index()
 

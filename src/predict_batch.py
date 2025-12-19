@@ -14,11 +14,9 @@ def main(in_csv="data/tickets.csv", out_csv="data/predictions.csv"):
     out = df.copy()
     out["pred_category"] = cat_model.predict(X)
 
-    # probabilità categoria
     if hasattr(cat_model, "predict_proba"):
         out["prob_category"] = cat_model.predict_proba(X).max(axis=1)
 
-    # priorità ibrida riga per riga
     preds = []
     probs = []
     reasons = []

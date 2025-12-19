@@ -9,11 +9,10 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-# Assicura che la root del progetto sia nel PYTHONPATH (robusto per Streamlit)
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from src.priority_hybrid import predict_priority_hybrid, CONF_LOW  # noqa: E402
-from src.explain import top_terms  # noqa: E402
+from src.priority_hybrid import predict_priority_hybrid, CONF_LOW
+from src.explain import top_terms
 
 
 st.set_page_config(page_title="PW18 Ticket Triage", layout="centered")
@@ -42,7 +41,6 @@ def append_log(row: dict):
     os.makedirs("data", exist_ok=True)
     df_row = pd.DataFrame([row])
 
-    # Scrittura robusta: quoting completo, escape, newline corretto
     write_header = not os.path.exists(LOG_PATH)
     df_row.to_csv(
         LOG_PATH,
@@ -65,9 +63,9 @@ def load_metrics_text():
 
 
 # ---------------- UI ----------------
-st.title("Triage automatico ticket (PW18)")
+st.title("STT – Smart Ticket Triage")
 st.caption(
-    "Inserisci un ticket breve: il sistema propone **categoria** e **priorità (ibrida)**. "
+    "Inserisci un ticket breve: il sistema propone **categoria** e **priorità**. "
     "Dati sintetici, nessun dato personale."
 )
 
@@ -79,7 +77,6 @@ tab1, tab2, tab3, tab4 = st.tabs(["🧾 Classifica", "📦 Batch CSV", "📊 Met
 with tab1:
     st.subheader("Classificazione singolo ticket")
 
-    # default demo values
     if "title_demo" not in st.session_state:
         st.session_state["title_demo"] = "Errore 500 su login"
     if "body_demo" not in st.session_state:
@@ -110,10 +107,8 @@ with tab1:
     text = (title + " " + body).strip()
 
     if st.button("Classifica", type="primary"):
-        # Categoria (solo ML)
         pred_cat, p_cat = predict_with_proba(cat_model, text)
 
-        # Priorità ibrida (regole + ML + conservativo)
         pred_pri, p_pri, pri_reason = predict_priority_hybrid(pri_model, text)
 
         st.markdown("### Risultato")
@@ -129,7 +124,6 @@ with tab1:
         with c2:
             st.metric("Priorità suggerita (ibrida)", pred_pri)
 
-            # Mostra motivazione priorità
             if pri_reason.startswith("rule"):
                 if pri_reason == "rule_high":
                     st.info("Priorità determinata da **regole** (keyword critiche).")
@@ -154,7 +148,6 @@ with tab1:
             _, pri_terms = top_terms(pri_model, text, k=5)
             st.dataframe(pri_terms, use_container_width=True)
 
-        # Log
         append_log({
             "timestamp": datetime.now().isoformat(timespec="seconds"),
             "title": title,
@@ -187,12 +180,10 @@ with tab2:
 
             out = df.copy()
 
-            # Categoria (ML)
             out["pred_category"] = cat_model.predict(X)
             if hasattr(cat_model, "predict_proba"):
                 out["prob_category"] = cat_model.predict_proba(X).max(axis=1)
 
-            # Priorità ibrida riga per riga
             preds, probs, reasons = [], [], []
             for txt in X.tolist():
                 p, pr, reason = predict_priority_hybrid(pri_model, txt)
@@ -223,7 +214,6 @@ with tab3:
     if metrics_text:
         st.code(metrics_text)
 
-    # Auto-detect grafici report: confusion + distribuzioni + F1 per classe
     imgs = sorted(
         glob.glob("reports/confusion_*.png")
         + glob.glob("reports/class_*.png")
@@ -236,7 +226,6 @@ with tab3:
     else:
         st.info("Nessun grafico trovato in reports/. Esegui: python -m src.train_models e poi python -m src.report_figures")
 
-    # Log predizioni
     if os.path.exists(LOG_PATH):
         st.markdown("### Log predizioni (ultime 50)")
         try:
@@ -251,13 +240,13 @@ with tab4:
     st.subheader("Informazioni")
     st.markdown(
         """
-**PW18 – Triage automatico ticket**  
-- Input: oggetto + descrizione  
-- Output: categoria (Amministrazione/Tecnico/Commerciale) e priorità (bassa/media/alta)  
-- Categoria: classificazione ML (TF-IDF + modello scelto tramite confronto LogReg vs Naive Bayes)  
-- Priorità: approccio **ibrido** (regole keyword + ML, con fallback conservativo a bassa confidenza)  
-- Spiegabilità: top-5 parole/frasi influenti calcolate sia per Logistic Regression sia per Naive Bayes  
-- Dataset: sintetico, generato ad hoc, senza dati personali.
+        **STT – Smart Ticket Triage**  
+        - Input: oggetto + descrizione  
+        - Output: categoria (Amministrazione/Tecnico/Commerciale) e priorità (bassa/media/alta)  
+        - Categoria: classificazione ML (TF-IDF + modello scelto tramite confronto LogReg vs Naive Bayes)  
+        - Priorità: approccio **ibrido** (regole keyword + ML, con fallback conservativo a bassa confidenza)  
+        - Spiegabilità: top-5 parole/frasi influenti calcolate sia per Logistic Regression sia per Naive Bayes  
+        - Dataset: sintetico, generato ad hoc, senza dati personali.
         """
     )
     st.write("Suggerimento: per aggiornare i modelli riesegui `python -m src.train_models` e poi riavvia la dashboard.")

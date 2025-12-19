@@ -2,7 +2,6 @@ from __future__ import annotations
 import re
 from typing import Optional, Tuple
 
-# Keyword “forti” (override)
 HIGH_RULES = [
     r"\bbloccante\b", r"\burgente\b", r"\bcritico\b", r"\bcrash\b",
     r"\berrore 500\b", r"\bnon disponibile\b", r"\bapi non risponde\b"
@@ -11,7 +10,7 @@ MEDIUM_RULES = [
     r"\btimeout\b", r"\blent[oaie]\b", r"\bin ritardo\b", r"\bmancante\b", r"\bnon corretta\b"
 ]
 
-CONF_LOW = 0.55  # sotto questa soglia: bassa confidenza
+CONF_LOW = 0.55
 
 
 def rule_priority(text: str) -> Optional[str]:
@@ -46,7 +45,6 @@ def predict_priority_hybrid(priority_model, text: str) -> Tuple[str, Optional[fl
 
     # 3) Se confidenza bassa: comportamento conservativo
     if proba is not None and proba < CONF_LOW:
-        # conservativo: non alzare troppo. Se ML dice alta ma è insicuro → media
         if pred == "alta":
             return "media", proba, "ml_low_conf"
         return pred, proba, "ml_low_conf"

@@ -55,7 +55,6 @@ def train_category(df: pd.DataFrame) -> dict:
     res_lr = eval_model("LogReg", pipe_lr, X_train, X_test, y_train, y_test, "category")
 
     # Modello 2: Multinomial Naive Bayes
-    # NB richiede feature non-negative => TF-IDF ok
     pipe_nb = Pipeline([("tfidf", build_vectorizer()), ("clf", MultinomialNB())])
     res_nb = eval_model("NaiveBayes", pipe_nb, X_train, X_test, y_train, y_test, "category")
 
