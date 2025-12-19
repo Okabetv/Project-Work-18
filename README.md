@@ -26,7 +26,7 @@ Il progetto utilizza **dataset sintetico**, generato ad hoc, e **non contiene da
 ---
 
 ## Struttura del progetto
-
+```bash
 PW 18/
 │
 ├── app/
@@ -60,7 +60,7 @@ PW 18/
 │
 ├── requirements.txt
 └── README.md
-
+```
 ---
 
 ## Requisiti
