@@ -15,7 +15,7 @@ from src.priority_hybrid import predict_priority_hybrid, CONF_LOW
 from src.explain import top_terms
 
 
-st.set_page_config(page_title="PW18 Ticket Triage", layout="centered")
+st.set_page_config(page_title="STT – Smart Ticket Triage", layout="centered")
 
 CONFIDENCE_WARN = 0.55
 LOG_PATH = "data/prediction_log.csv"
