@@ -95,7 +95,7 @@ def main():
 
     # Riassunto metriche
     with open("reports/metrics_summary.txt", "w", encoding="utf-8") as f:
-        f.write("PW18 - Sintesi metriche\n\n")
+        f.write("STT - Sintesi metriche\n\n")
         f.write(f"Categoria - Best: {best_cat['name']} | Acc: {best_cat['accuracy']:.3f} | F1 macro: {best_cat['f1_macro']:.3f}\n")
         f.write(f"Priorità - LogReg | Acc: {pri_res['accuracy']:.3f} | F1 macro: {pri_res['f1_macro']:.3f}\n")
 
