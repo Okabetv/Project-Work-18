@@ -65,8 +65,8 @@ def load_metrics_text():
 # ---------------- UI ----------------
 st.title("STT – Smart Triage Ticket")
 st.caption(
-    "Inserisci un ticket breve: il sistema propone **categoria** e **priorità**. "
-    "Dati sintetici, nessun dato personale."
+    "Per favore, inserisci un ticket breve: il sistema ti suggerirà la **categoria** e la **priorità**."
+    "Dati sintetici, senza informazioni personali."
 )
 
 cat_model, pri_model = load_models()
@@ -80,7 +80,7 @@ with tab1:
     if "title_demo" not in st.session_state:
         st.session_state["title_demo"] = "Errore 500 su login"
     if "body_demo" not in st.session_state:
-        st.session_state["body_demo"] = "Da stamattina vedo errore HTTP 500 quando provo ad accedere. È bloccante."
+        st.session_state["body_demo"] = "Da questa mattina, ogni volta che cerco di accedere, mi appare un errore HTTP 500. È davvero frustrante."
 
     colA, colB = st.columns([3, 1])
     with colA:
@@ -96,7 +96,7 @@ with tab1:
                 st.session_state["body_demo"] = str(r["body"])
                 st.rerun()
             except Exception:
-                st.warning("Non riesco a leggere data/tickets.csv. Genera prima il dataset.")
+                st.warning("Non riesco a leggere il file data/tickets.csv. Prima di tutto, bisogna generare il dataset.")
 
     body = st.text_area(
         "Descrizione",
@@ -119,16 +119,16 @@ with tab1:
             if p_cat is not None:
                 st.write(f"**Confidenza categoria:** {p_cat:.2f}")
                 if p_cat < CONFIDENCE_WARN:
-                    st.warning("Confidenza bassa: ticket potenzialmente ambiguo (valutare revisione umana).")
+                    st.warning("Confidenza bassa: il ticket potrebbe essere ambiguo (è consigliabile una revisione umana).")
 
         with c2:
             st.metric("Priorità suggerita (ibrida)", pred_pri)
 
             if pri_reason.startswith("rule"):
                 if pri_reason == "rule_high":
-                    st.info("Priorità determinata da **regole** (keyword critiche).")
+                    st.info("La priorità è stabilita da **regole** (keyword critiche).")
                 else:
-                    st.info("Priorità determinata da **regole** (keyword di gravità media).")
+                    st.info("La priorità è stabilita da **regole** (keyword di gravità media).")
             else:
                 if p_pri is not None:
                     st.write(f"**Confidenza priorità (ML):** {p_pri:.2f}")
@@ -193,8 +193,8 @@ with tab2:
 with tab3:
     st.subheader("Predizione batch da CSV")
     st.write(
-        "Carica un CSV con colonne **title** e **body**. "
-        "Verrà generato un CSV con predizioni + confidenza + motivo priorità (ibrida)."
+        "Carica un CSV con le colonne **title** e **body**."
+        "Verrà creato un CSV con le predizioni, il livello di confidenza e il motivo della priorità (approccio ibrido)."
     )
 
     up = st.file_uploader("Carica CSV", type=["csv"])
@@ -202,7 +202,7 @@ with tab3:
         df = pd.read_csv(up)
 
         if not {"title", "body"}.issubset(df.columns):
-            st.error("Il CSV deve contenere le colonne: title, body")
+            st.error("Il CSV deve includere le colonne: title, body.")
         else:
             X = (df["title"].fillna("") + " " + df["body"].fillna("")).astype(str)
 
@@ -239,12 +239,12 @@ with tab4:
     st.markdown(
         """
         **STT – Smart Ticket Triage**  
-        - Input: oggetto + descrizione  
-        - Output: categoria (Amministrazione/Tecnico/Commerciale) e priorità (bassa/media/alta)  
+        - Input: oggetto + descrizione
+        - Output: categoria (Amministrazione/Tecnico/Commerciale) e priorità (bassa/media/alta) 
         - Categoria: classificazione ML (TF-IDF + modello scelto tramite confronto LogReg vs Naive Bayes)  
-        - Priorità: approccio **ibrido** (regole keyword + ML, con fallback conservativo a bassa confidenza)  
+        - Priorità: approccio **ibrido** (regole keyword + ML, con un fallback conservativo a bassa confidenza)  
         - Spiegabilità: top-5 parole/frasi influenti calcolate sia per Logistic Regression sia per Naive Bayes  
-        - Dataset: sintetico, generato ad hoc, senza dati personali.
+        - Dataset: sintetico, creato ad hoc, senza dati personali.
         """
     )
-    st.write("Suggerimento: per aggiornare i modelli riesegui `python -m src.train_models` e poi riavvia la dashboard.")
+    st.write("Suggerimento: per aggiornare i modelli, riesegui `python -m src.train_models` e poi riavvia la dashboard.")

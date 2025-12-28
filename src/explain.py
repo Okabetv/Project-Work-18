@@ -40,4 +40,4 @@ def top_terms(pipe, text: str, k: int = 5):
         return pred, _top_from_vector(vec, feature_names, scores, k)
 
     # Fallback
-    return pred, [("(spiegabilità non disponibile per questo modello)", 0.0)]
+    return pred, [("(la spiegabilità non è disponibile per questo modello.)", 0.0)]
