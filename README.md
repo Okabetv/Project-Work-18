@@ -7,7 +7,7 @@ Traccia 18 – Classificazione automatica ticket di assistenza
 
 ## Obiettivo del progetto
 
-Il progetto realizza un **sistema di triage automatico** per ticket di assistenza clienti che, dato un testo composto da **oggetto** e **descrizione**, è in grado di:
+Il progetto sviluppa un **sistema di triage automatico** per i ticket di assistenza clienti che, partendo da un testo composto da **oggetto** e **descrizione**, è capace di:
 
 - classificare il ticket in una **categoria**:
   - Amministrazione
@@ -17,11 +17,11 @@ Il progetto realizza un **sistema di triage automatico** per ticket di assistenz
   - bassa
   - media
   - alta
-- fornire una **spiegazione** tramite le parole/frasi più influenti
+- fornire una **spiegazione** utilizzando le parole o frasi più significative
 - supportare **predizioni batch da CSV**
-- visualizzare risultati e metriche tramite **dashboard web**
+- visualizzare risultati e metriche attraverso una **dashboard web**
 
-Il progetto utilizza **dataset sintetico**, generato ad hoc, e **non contiene dati personali**.
+Il progetto si avvale di un **dataset sintetico**, creato appositamente, e **non include dati personali**.
 
 ---
 
@@ -79,7 +79,7 @@ Librerie principali:
 
 ## Installazione e dipendenze
 
-Il progetto utilizza un **ambiente virtuale Python** per garantire isolamento e riproducibilità.
+Il progetto sfrutta un **ambiente virtuale Python** per assicurare isolamento e riproducibilità.
 
 ## Creazione ambiente virtuale
 
@@ -103,7 +103,7 @@ source venv/bin/activate
 
 ## Installazione librerie
 
-Tutte le dipendenze sono elencate nel file `requirements.txt`.
+Tutte le dipendenze sono indicate nel file `requirements.txt`.
 
 ```bash
 pip install -r requirements.txt
@@ -121,7 +121,7 @@ Il file `requirements.txt` include:
 
 ## Generazione dataset sintetico
 
-Il dataset viene generato automaticamente con ticket realistici.
+Il dataset viene creato automaticamente con ticket che sembrano realistici.
 
 ```bash
 python -m src.generate_dataset --n 350 --out data/tickets.csv
@@ -147,10 +147,10 @@ python -m src.train_models > reports/metrics.txt
 
 Durante il training:
 
-* split **80% training / 20% test**
-* confronto **Logistic Regression vs Naive Bayes** per la categoria
-* selezione automatica del modello migliore (F1 macro)
-* training modello priorità (Logistic Regression)
+* abbiamo diviso i dati in **80% per il training e 20% per il test**
+* abbiamo confrontato **Logistic Regression e Naive Bayes** per la categoria
+* abbiamo selezionato automaticamente il modello migliore basandoci sull'F1 macro
+* abbiamo dato priorità al training del modello **Logistic Regression**
 
 Metriche calcolate:
 
@@ -210,12 +210,12 @@ streamlit run app/streamlit_app.py
 
 Funzionalità:
 
-* Inserimento ticket singolo
-* Classificazione categoria e priorità
-* Priorità **ibrida** (regole + ML)
-* Visualizzazione **top-5 parole influenti**
-* Upload CSV batch
-* Visualizzazione metriche e grafici
+* Inserimento di un ticket singolo
+* Classificazione per categoria e priorità
+* Priorità **ibrida** (regole + machine learning)
+* Visualizzazione delle **top-5 parole influenti**
+* Upload di file CSV in batch
+* Visualizzazione di metriche e grafici
 * Log automatico delle predizioni
 
 ✔️ Requisito traccia: **interfaccia grafica**
@@ -224,10 +224,10 @@ Funzionalità:
 
 ## Priorità ibrida
 
-La priorità è stimata con approccio **ibrido**:
+La priorità viene stimata attraverso un approccio **ibrido**:
 
-1. Regole basate su keyword critiche (es. *bloccante*, *crash*, *errore 500*)
-2. Modello ML per casi non critici
+1. Regole basate su parole chiave critiche (ad esempio *bloccante*, *crash*, *errore 500*)
+2. Modello di machine learning per casi non critici
 3. Fallback conservativo in caso di bassa confidenza
 
 ✔️ Miglioramento realistico “da contesto aziendale”
@@ -236,7 +236,7 @@ La priorità è stimata con approccio **ibrido**:
 
 ## Spiegabilità del modello
 
-Per ogni predizione vengono mostrate le **5 parole/frasi più influenti**, calcolate:
+Per ogni predizione, vengono mostrate le **5 parole/frasi più influenti**, calcolate:
 
 * per **Logistic Regression** tramite coefficienti
 * per **Naive Bayes** tramite probabilità logaritmiche
@@ -244,21 +244,6 @@ Per ogni predizione vengono mostrate le **5 parole/frasi più influenti**, calco
 ✔️ Requisito traccia: **interpretabilità**
 
 ---
-
-## Allineamento con la Traccia 18
-
-| Requisito traccia          | Stato |
-| -------------------------- | ----- |
-| Dataset sintetico 200–500  | ✅    |
-| Classificazione categoria  | ✅    |
-| Stima priorità             | ✅    |
-| Preprocessing testo        | ✅    |
-| Modelli ML                 | ✅    |
-| Valutazione (Accuracy, F1) | ✅    |
-| Confusion Matrix           | ✅    |
-| Batch CSV                  | ✅    |
-| Dashboard grafica          | ✅    |
-| Spiegabilità               | ✅    |
 
 ## 👤 Autore
 
@@ -269,11 +254,11 @@ Corso di Laurea in Informatica per le Aziende Digitali
 
 ## Reset del progetto (pulizia completa)
 
-Questa sezione permette di **ripulire completamente il progetto** eliminando file generati automaticamente (dataset, modelli, report), così da poter **rigenerare tutto da zero** in modo riproducibile.
+Questa sezione consente di **ripulire completamente il progetto**, rimuovendo file generati automaticamente come dataset, modelli e report. In questo modo, puoi **rigenerare tutto da zero** in modo riproducibile.
 
 ## File e cartelle generati automaticamente
 
-I seguenti elementi **non fanno parte del codice sorgente** e vengono creati durante l’esecuzione:
+I seguenti elementi **non fanno parte del codice sorgente** e vengono creati durante l'esecuzione:
 
 * `data/*.csv` → dataset e predizioni
 * `models/*.joblib` → modelli addestrati
