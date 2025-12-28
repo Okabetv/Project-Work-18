@@ -224,7 +224,7 @@ def generate(n: int, noise: float, mix: float, label_noise: float) -> pd.DataFra
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--seed", type=int, default=None, help="Seed RNG. Se non fornito, dataset diverso ad ogni run.")
-    p.add_argument("--n", type=int, default=350)
+    p.add_argument("--n", type=int, default=700)
     p.add_argument("--out", type=str, default="data/tickets.csv")
 
     p.add_argument("--noise", type=float, default=0.15, help="Rumore testuale (0-0.30)")

@@ -63,14 +63,14 @@ def load_metrics_text():
 
 
 # ---------------- UI ----------------
-st.title("STT – Smart Ticket Triage")
+st.title("STT – Smart Triage Ticket")
 st.caption(
     "Inserisci un ticket breve: il sistema propone **categoria** e **priorità**. "
     "Dati sintetici, nessun dato personale."
 )
 
 cat_model, pri_model = load_models()
-tab1, tab2, tab3, tab4 = st.tabs(["🧾 Classifica", "📦 Batch CSV", "📊 Metriche", "ℹ️ Info"])
+tab1, tab2, tab3, tab4 = st.tabs(["🧾 Classifica", "📊 Metriche", "📦 Batch CSV", "ℹ️ Info"])
 
 
 # ---------------- TAB 1: CLASSIFICA ----------------
@@ -160,9 +160,37 @@ with tab1:
         })
         st.success("Predizione salvata nel log (data/prediction_log.csv).")
 
-
-# ---------------- TAB 2: BATCH ----------------
+# ---------------- TAB 3: METRICHE ----------------
 with tab2:
+    st.subheader("Metriche e grafici")
+
+    metrics_text = load_metrics_text()
+    if metrics_text:
+        st.code(metrics_text)
+
+    imgs = sorted(
+        glob.glob("reports/confusion_*.png")
+        + glob.glob("reports/class_*.png")
+        + glob.glob("reports/f1_*.png")
+    )
+
+    if imgs:
+        for img in imgs:
+            st.image(img, caption=os.path.basename(img), use_container_width=True)
+    else:
+        st.info("Nessun grafico trovato in reports/. Esegui: python -m src.train_models e poi python -m src.report_figures")
+
+    if os.path.exists(LOG_PATH):
+        st.markdown("### Log predizioni (ultime 50)")
+        try:
+            log_df = pd.read_csv(LOG_PATH, engine="python", on_bad_lines="skip").tail(50)
+            st.dataframe(log_df, use_container_width=True)
+        except Exception:
+            st.warning("Log predizioni non leggibile. Puoi eliminarlo: data/prediction_log.csv (verrà ricreato).")
+
+
+# ---------------- TAB 3: BATCH ----------------
+with tab3:
     st.subheader("Predizione batch da CSV")
     st.write(
         "Carica un CSV con colonne **title** e **body**. "
@@ -204,36 +232,6 @@ with tab2:
                 file_name="predictions.csv",
                 mime="text/csv",
             )
-
-
-# ---------------- TAB 3: METRICHE ----------------
-with tab3:
-    st.subheader("Metriche e grafici")
-
-    metrics_text = load_metrics_text()
-    if metrics_text:
-        st.code(metrics_text)
-
-    imgs = sorted(
-        glob.glob("reports/confusion_*.png")
-        + glob.glob("reports/class_*.png")
-        + glob.glob("reports/f1_*.png")
-    )
-
-    if imgs:
-        for img in imgs:
-            st.image(img, caption=os.path.basename(img), use_container_width=True)
-    else:
-        st.info("Nessun grafico trovato in reports/. Esegui: python -m src.train_models e poi python -m src.report_figures")
-
-    if os.path.exists(LOG_PATH):
-        st.markdown("### Log predizioni (ultime 50)")
-        try:
-            log_df = pd.read_csv(LOG_PATH, engine="python", on_bad_lines="skip").tail(50)
-            st.dataframe(log_df, use_container_width=True)
-        except Exception:
-            st.warning("Log predizioni non leggibile. Puoi eliminarlo: data/prediction_log.csv (verrà ricreato).")
-
 
 # ---------------- TAB 4: INFO ----------------
 with tab4:

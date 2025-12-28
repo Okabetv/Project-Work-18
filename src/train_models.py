@@ -16,7 +16,11 @@ from src.features import basic_clean
 
 
 def build_vectorizer() -> TfidfVectorizer:
-    return TfidfVectorizer(preprocessor=basic_clean, ngram_range=(1, 2), min_df=2)
+    return TfidfVectorizer(
+        preprocessor=basic_clean, 
+        ngram_range=(1, 2), 
+        min_df=2
+    )
 
 
 def eval_model(name: str, pipe: Pipeline, X_train, X_test, y_train, y_test, label_col: str) -> dict:
